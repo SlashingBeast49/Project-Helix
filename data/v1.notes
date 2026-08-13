@@ -1,0 +1,17 @@
+columns = [
+    "number",
+    "symbol",
+    "name",
+    "atomic_mass",
+    "category",
+    "period",
+    "group",
+    "block",
+    "density",
+    "melt",
+    "boil",
+    "molar_heat",
+    "electron_affinity",
+    "electronegativity_pauling",
+    "electron_configuration",
+]
