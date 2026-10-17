@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Helix — Element Predictor Dashboard</title>
+  <meta name="description" content="Enter an atomic number and explore chemical element properties with data-driven predictions powered by the Helix dataset." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── Animated Background Canvas ── -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- ── Top Navigation Bar ── -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a class="nav-brand" href="#" aria-label="Project Helix Home">
+        <svg class="nav-logo" viewBox="0 0 800 600" aria-hidden="true">
+          <g stroke="#00e5c8" stroke-width="8" stroke-linecap="round" fill="none">
+            <line x1="280" y1="120" x2="330" y2="180"/><line x1="280" y1="120" x2="280" y2="240"/>
+            <line x1="330" y1="180" x2="280" y2="240"/><line x1="280" y1="240" x2="350" y2="200"/>
+            <line x1="330" y1="180" x2="350" y2="200"/><line x1="280" y1="240" x2="330" y2="300"/>
+            <line x1="330" y1="300" x2="280" y2="360"/><line x1="280" y1="360" x2="350" y2="420"/>
+            <line x1="280" y1="360" x2="280" y2="480"/><line x1="350" y1="420" x2="280" y2="480"/>
+            <line x1="330" y1="300" x2="350" y2="420"/>
+            <line x1="520" y1="120" x2="470" y2="180"/><line x1="520" y1="120" x2="520" y2="240"/>
+            <line x1="470" y1="180" x2="520" y2="240"/><line x1="520" y1="240" x2="450" y2="200"/>
+            <line x1="470" y1="180" x2="450" y2="200"/><line x1="520" y1="240" x2="470" y2="300"/>
+            <line x1="470" y1="300" x2="520" y2="360"/><line x1="520" y1="360" x2="450" y2="420"/>
+            <line x1="520" y1="360" x2="520" y2="480"/><line x1="450" y1="420" x2="520" y2="480"/>
+            <line x1="470" y1="300" x2="450" y2="420"/>
+            <line x1="330" y1="300" x2="470" y2="300"/>
+          </g>
+          <g fill="#00e5c8">
+            <circle cx="280" cy="120" r="14"/><circle cx="330" cy="180" r="14"/>
+            <circle cx="280" cy="240" r="14"/><circle cx="350" cy="200" r="14"/>
+            <circle cx="330" cy="300" r="14"/><circle cx="280" cy="360" r="14"/>
+            <circle cx="350" cy="420" r="14"/><circle cx="280" cy="480" r="14"/>
+            <circle cx="520" cy="120" r="14"/><circle cx="470" cy="180" r="14"/>
+            <circle cx="520" cy="240" r="14"/><circle cx="450" cy="200" r="14"/>
+            <circle cx="470" cy="300" r="14"/><circle cx="520" cy="360" r="14"/>
+            <circle cx="450" cy="420" r="14"/><circle cx="520" cy="480" r="14"/>
+          </g>
+        </svg>
+        <span class="nav-title"><span class="nav-title-light">PROJECT</span> HELIX</span>
+      </a>
+      <div class="nav-links">
+        <a href="#predictor" class="nav-link">Predictor</a>
+        <a href="#periodic-map" class="nav-link">Periodic Map</a>
+        <a href="#trends" class="nav-link">Trends</a>
+        <span class="nav-badge">Dataset v1</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── Hero Section ── -->
+  <header class="hero" id="hero">
+    <div class="hero-content">
+      <p class="hero-eyebrow">Project Helix · Element Intelligence</p>
+      <h1 class="hero-title">Explore Every<br><span class="hero-gradient">Element</span></h1>
+      <p class="hero-subtitle">Enter an atomic number to reveal physical properties, electron configuration, and data-driven property predictions across all 118 elements.</p>
+
+      <div class="search-container" id="predictor">
+        <div class="search-box" id="search-box">
+          <div class="search-icon" aria-hidden="true">⚛</div>
+          <input
+            type="number"
+            id="atomic-input"
+            class="search-input"
+            placeholder="Enter atomic number (1–118)"
+            min="1"
+            max="118"
+            autocomplete="off"
+            aria-label="Atomic number"
+          />
+          <button class="search-btn" id="search-btn" aria-label="Search element">
+            <span class="search-btn-text">Analyse</span>
+            <span class="search-btn-arrow">→</span>
+          </button>
+        </div>
+        <div class="search-hints">
+          <button class="hint-chip" data-z="1">H · 1</button>
+          <button class="hint-chip" data-z="6">C · 6</button>
+          <button class="hint-chip" data-z="26">Fe · 26</button>
+          <button class="hint-chip" data-z="79">Au · 79</button>
+          <button class="hint-chip" data-z="92">U · 92</button>
+          <button class="hint-chip" data-z="118">Og · 118</button>
+        </div>
+        <div class="search-error" id="search-error" role="alert" aria-live="polite"></div>
+      </div>
+    </div>
+    <div class="hero-deco" aria-hidden="true">
+      <div class="deco-ring ring-1"></div>
+      <div class="deco-ring ring-2"></div>
+      <div class="deco-ring ring-3"></div>
+    </div>
+  </header>
+
+  <!-- ── Loading Overlay ── -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="spinner"></div>
+    <p class="loading-text">Loading Helix Dataset…</p>
+  </div>
+
+  <!-- ── Main Results Section ── -->
+  <main class="results-section" id="results-section" hidden>
+
+    <section class="element-hero-card" id="element-hero-card">
+      <div class="element-hero-inner">
+        <div class="element-identity">
+          <div class="element-symbol-badge" id="el-symbol-badge">
+            <span class="el-number" id="el-number">—</span>
+            <span class="el-symbol" id="el-symbol">—</span>
+            <span class="el-mass" id="el-mass">—</span>
+          </div>
+          <div class="element-meta">
+            <h2 class="el-name" id="el-name">—</h2>
+            <div class="el-tags" id="el-tags"></div>
+            <p class="el-summary" id="el-summary">—</p>
+            <div class="el-discovery" id="el-discovery"></div>
+          </div>
+        </div>
+        <div class="element-image-panel" id="element-image-panel">
+          <img class="el-photo" id="el-photo" src="" alt="" loading="lazy" />
+          <p class="el-photo-caption" id="el-photo-caption"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <h3 class="section-heading">Physical Properties</h3>
+      <div class="prop-grid" id="prop-grid"></div>
+    </section>
+
+    <section class="section-block">
+      <h3 class="section-heading">Electron Configuration</h3>
+      <div class="electron-section" id="electron-section">
+        <div class="ec-text-panel">
+          <div class="ec-notation" id="ec-notation">—</div>
+          <div class="ec-shells-row" id="ec-shells-row"></div>
+        </div>
+        <div class="bohr-panel">
+          <canvas class="bohr-canvas" id="bohr-canvas" width="320" height="320" aria-label="Bohr model diagram"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block" id="predictions-section">
+      <h3 class="section-heading">
+        Property Predictions
+        <span class="heading-badge">ML · Trend Analysis</span>
+      </h3>
+      <p class="section-desc">Values estimated from periodic trends using weighted neighbour regression across the Helix dataset. Actual values shown where available.</p>
+      <div class="prediction-grid" id="prediction-grid"></div>
+    </section>
+
+    <section class="section-block" id="periodic-map">
+      <h3 class="section-heading">Periodic Position</h3>
+      <div class="periodic-wrapper">
+        <div class="mini-table" id="mini-table"></div>
+        <div class="position-stats" id="position-stats"></div>
+      </div>
+    </section>
+
+    <section class="section-block" id="trends">
+      <h3 class="section-heading">Property Trends</h3>
+      <p class="section-desc">How this element compares across the dataset.</p>
+      <div class="trends-controls">
+        <label class="trends-label" for="trend-property">Property:</label>
+        <select class="trends-select" id="trend-property">
+          <option value="atomic_mass">Atomic Mass</option>
+          <option value="density">Density</option>
+          <option value="melt">Melting Point (K)</option>
+          <option value="boil">Boiling Point (K)</option>
+          <option value="electronegativity_pauling">Electronegativity (Pauling)</option>
+          <option value="electron_affinity">Electron Affinity</option>
+          <option value="molar_heat">Molar Heat</option>
+        </select>
+        <label class="trends-label" for="trend-scope">Scope:</label>
+        <select class="trends-select" id="trend-scope">
+          <option value="all">All Elements</option>
+          <option value="period">Same Period</option>
+          <option value="group">Same Group</option>
+          <option value="block">Same Block</option>
+        </select>
+      </div>
+      <div class="chart-container">
+        <canvas id="trends-chart" aria-label="Property trend chart"></canvas>
+      </div>
+    </section>
+
+    <div class="nav-arrows">
+      <button class="arrow-btn" id="prev-btn" aria-label="Previous element">← Prev</button>
+      <span class="nav-arrow-label" id="nav-arrow-label"></span>
+      <button class="arrow-btn" id="next-btn" aria-label="Next element">Next →</button>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p class="footer-text"><strong>Project Helix</strong> · Dataset v1 · 118 Elements · 15 Features</p>
+      <p class="footer-sub">Data from <a class="footer-link" href="https://github.com/Bowserinator/Periodic-Table-JSON" target="_blank" rel="noopener">Periodic Table JSON</a> · Built to understand before modelling.</p>
+    </div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
