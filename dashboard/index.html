@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Project Helix — Element Predictor Dashboard</title>
-  <meta name="description" content="Enter an atomic number and explore chemical element properties with data-driven predictions powered by the Helix dataset." />
+  <meta name="description" content="Explore chemical element properties for all 118 known elements and predict properties of hypothetical elements beyond Z=118 using ML models trained on the Helix dataset." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -52,7 +52,8 @@
         <a href="#predictor" class="nav-link">Predictor</a>
         <a href="#periodic-map" class="nav-link">Periodic Map</a>
         <a href="#trends" class="nav-link">Trends</a>
-        <span class="nav-badge">Dataset v1</span>
+        <a href="#data-quality" class="nav-link">Data Quality</a>
+        <span class="nav-badge">Dataset v1.1 + ML</span>
       </div>
     </div>
   </nav>
@@ -60,9 +61,9 @@
   <!-- ── Hero Section ── -->
   <header class="hero" id="hero">
     <div class="hero-content">
-      <p class="hero-eyebrow">Project Helix · Element Intelligence</p>
+      <p class="hero-eyebrow">Project Helix · Element Intelligence + ML</p>
       <h1 class="hero-title">Explore Every<br><span class="hero-gradient">Element</span></h1>
-      <p class="hero-subtitle">Enter an atomic number to reveal physical properties, electron configuration, and data-driven property predictions across all 118 elements.</p>
+      <p class="hero-subtitle">Enter any atomic number to reveal physical properties, electron configuration, and ML-powered predictions — including hypothetical elements beyond Z=118.</p>
 
       <div class="search-container" id="predictor">
         <div class="search-box" id="search-box">
@@ -71,9 +72,9 @@
             type="number"
             id="atomic-input"
             class="search-input"
-            placeholder="Enter atomic number (1–118)"
+            placeholder="Enter atomic number (1–172+)"
             min="1"
-            max="118"
+            max="999"
             autocomplete="off"
             aria-label="Atomic number"
           />
@@ -87,8 +88,11 @@
           <button class="hint-chip" data-z="6">C · 6</button>
           <button class="hint-chip" data-z="26">Fe · 26</button>
           <button class="hint-chip" data-z="79">Au · 79</button>
-          <button class="hint-chip" data-z="92">U · 92</button>
           <button class="hint-chip" data-z="118">Og · 118</button>
+          <button class="hint-chip hint-chip-special" data-z="119">Uue · 119</button>
+          <button class="hint-chip hint-chip-special" data-z="126">Ubh · 126</button>
+          <button class="hint-chip hint-chip-special" data-z="137">Uts · 137</button>
+          <button class="hint-chip hint-chip-special" data-z="164">Uhq · 164</button>
         </div>
         <div class="search-error" id="search-error" role="alert" aria-live="polite"></div>
       </div>
@@ -108,6 +112,16 @@
 
   <!-- ── Main Results Section ── -->
   <main class="results-section" id="results-section" hidden>
+
+    <!-- Hypothetical element banner (shown for Z > 118) -->
+    <div class="hypothetical-banner" id="hypothetical-banner" hidden>
+      <div class="hypo-icon">🔮</div>
+      <div class="hypo-text">
+        <strong>Hypothetical Element</strong>
+        <span id="hypo-detail">This element has not been synthesised. All properties shown are ML predictions based on periodic trends.</span>
+      </div>
+      <div class="hypo-confidence" id="hypo-confidence"></div>
+    </div>
 
     <section class="element-hero-card" id="element-hero-card">
       <div class="element-hero-inner">
@@ -151,10 +165,11 @@
 
     <section class="section-block" id="predictions-section">
       <h3 class="section-heading">
-        Property Predictions
-        <span class="heading-badge">ML · Trend Analysis</span>
+        ML Property Predictions
+        <span class="heading-badge">Ridge Regression · Polynomial Features</span>
       </h3>
-      <p class="section-desc">Values estimated from periodic trends using weighted neighbour regression across the Helix dataset. Actual values shown where available.</p>
+      <p class="section-desc">Values predicted by a Ridge regression model trained on periodic table features. Physical bounds are enforced. Actual values shown for known elements.</p>
+      <div class="model-metrics-row" id="model-metrics-row"></div>
       <div class="prediction-grid" id="prediction-grid"></div>
     </section>
 
@@ -193,6 +208,15 @@
       </div>
     </section>
 
+    <!-- Data Quality Dashboard -->
+    <section class="section-block" id="data-quality">
+      <h3 class="section-heading">
+        Dataset Quality Report
+        <span class="heading-badge">v1.1 · Automated Analysis</span>
+      </h3>
+      <div class="quality-dashboard" id="quality-dashboard"></div>
+    </section>
+
     <div class="nav-arrows">
       <button class="arrow-btn" id="prev-btn" aria-label="Previous element">← Prev</button>
       <span class="nav-arrow-label" id="nav-arrow-label"></span>
@@ -203,12 +227,14 @@
 
   <footer class="footer">
     <div class="footer-inner">
-      <p class="footer-text"><strong>Project Helix</strong> · Dataset v1 · 118 Elements · 15 Features</p>
-      <p class="footer-sub">Data from <a class="footer-link" href="https://github.com/Bowserinator/Periodic-Table-JSON" target="_blank" rel="noopener">Periodic Table JSON</a> · Built to understand before modelling.</p>
+      <p class="footer-text"><strong>Project Helix</strong> · Dataset v1.1 + ML · 118+ Elements · 15 Features</p>
+      <p class="footer-sub">Data from <a class="footer-link" href="https://github.com/Bowserinator/Periodic-Table-JSON" target="_blank" rel="noopener">Periodic Table JSON</a> · ML models trained with scikit-learn · Built to understand before modelling.</p>
     </div>
   </footer>
 
   <script src="data.js"></script>
+  <script src="model_coefficients.js"></script>
+  <script src="ml_engine.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

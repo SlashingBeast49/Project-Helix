@@ -1,6 +1,6 @@
 # Project Helix — Data Quality & Accuracy Summary
 
-> Full comprehensive report available at: [docs/data-quality-report.md](file:///c:/Users/H%20Siddarth/Documents/GitHub/Project-Helix/docs/data-quality-report.md)
+> Full comprehensive report available at: [docs/data-quality-report.md](data-quality-report.md)
 
 ## Verification Scorecard
 
