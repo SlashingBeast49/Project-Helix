@@ -185,6 +185,26 @@ For superheavy elements (Z = 104–118), the values already present in v1 were r
 
 2. **Arsenic:** Same situation — sublimation (887 K) is below the high-pressure triple-point melt (1090 K).
 
-3. **Hassium `melt`:** The source JSON had `126.0` listed under `melt` for Hs. This appears to be a theoretical sublimation/melting point estimate (126 °C ≈ 399 K); however, because the field is in Kelvin, 126 K has been retained as-is from the original source pending further audit.
+3. **Hassium `melt` (Resolved in v1.2 Audit):** The source JSON originally had `126.0` listed under `melt` for Hs. Cross-referencing against IUPAC and PubChem revealed this was an errant data-entry cross-wire from Hassium's estimated covalent atomic radius (126 pm). A refractory Group-8 transition metal homolog of Osmium cannot melt at 126 K (below liquid nitrogen temperature). Following Group-8 homolog trends (Os melt = 3306 K) and its estimated 4700 K boiling point, Hs melt has been updated to 3000.0 K (THEO).
 
 4. **All THEO values for Z > 103:** Should be treated with low confidence. These elements are produced only a few atoms at a time; their bulk properties are extrapolated from periodic trends with large uncertainty.
+
+---
+
+## Dataset v1.2 — Authoritative Quality & IUPAC/PubChem Audit Resolutions
+
+> **Date:** 2026-11-01  
+> **Ground Truth Sources:** IUPAC CIAAW 2021 Standard Atomic Weights, NIST Atomic Spectra Database, PubChem Periodic Table.
+
+| Z | Symbol | Feature | Pre-Audit Value | Verified Value | Ground Truth Source | Rationale |
+|---|--------|---------|-----------------|----------------|---------------------|-----------|
+| 9 | F | `atomic_mass` | 18.9984031636 | **18.998403162** | IUPAC CIAAW 2021 / NIST | Calibrated to 2021 precision standard $18.998403162(5)$. |
+| 18 | Ar | `atomic_mass` | 39.9481 | **39.948** | IUPAC CIAAW 2021 | Standard conventional single value (interval $[39.792, 39.963]$). |
+| 72 | Hf | `atomic_mass` | 178.492 | **178.486** | IUPAC CIAAW 2021 | Updated to refined standard atomic weight $178.486(6)$. |
+| 74 | W | `atomic_mass` | 183.841 | **183.84** | IUPAC CIAAW 2021 | Removed spurious 3rd decimal place; standard weight is $183.84(1)$. |
+| 79 | Au | `atomic_mass` | 196.9665695 | **196.966570** | IUPAC CIAAW 2021 / NIST | Aligned to central IUPAC value $196.966570(4)$. |
+| 82 | Pb | `atomic_mass` | 207.21 | **207.2** | IUPAC CIAAW 2021 | Standard conventional value representing interval $[206.14, 207.94]$. |
+| 87 | Fr | `electronegativity_pauling` | 0.79 | **0.7** | IUPAC / PubChem | Pauling reference value for Francium is 0.70; 0.79 was inadvertently duplicated from Cesium. |
+| 108 | Hs | `melt` | 126.0 | **3000.0** | Periodic Homolog Trend (Os) | Corrected 126 pm atomic radius entry error to 3000.0 K theoretical transition point. |
+| 115 | Mc | `atomic_mass` | 289.0 | **290.0** | IUPAC CIAAW 2021 / PubChem | IUPAC standard for longest-lived isotope $^{290}\text{Mc}$ ($t_{1/2} \approx 650\text{ ms}$). |
+

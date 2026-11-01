@@ -20,6 +20,14 @@ import os
 import math
 from pathlib import Path
 
+# UTF-8 stdout on Windows
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import Ridge

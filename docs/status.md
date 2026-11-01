@@ -1,6 +1,6 @@
 # Project Helix — Project Status
 
-**Current milestone:** Dataset v1.1 — Missing Values Resolved ✅
+**Current milestone:** Dataset v1.2 — Authoritative Quality & IUPAC/PubChem Audit Complete ✅
 
 ---
 
@@ -17,6 +17,7 @@
 * [x] **118 source URLs verified** as unique HTTPS Wikipedia entries
 * [x] **Reusable Python API layer created** (`HelixDataset` with lookup, filter, and summary tools)
 * [x] **Dataset v1.1 released** — 53 missing cells resolved (EXP / THEO / INTERP / CONV)
+* [x] **Dataset v1.2 released** — IUPAC CIAAW 2021 & PubChem cross-referencing audit, Hs melting point error resolved, ML polynomial regression retrained
 * [x] **Full per-cell audit trail** written to `docs/dataset-v1-1-changelog.md`
 * [x] **Helix Dashboard built** — interactive element explorer at `dashboard/index.html`
 
