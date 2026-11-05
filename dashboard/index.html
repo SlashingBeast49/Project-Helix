@@ -1,72 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Project Helix — Element Predictor Dashboard</title>
-  <meta name="description" content="Explore chemical element properties for all 118 known elements and predict properties of hypothetical elements beyond Z=118 using ML models trained on the Helix dataset." />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Project Helix — A structured chemical elements dataset and machine learning predictor by H. Siddarth." />
+  <meta name="theme-color" content="#111311" />
+  <title>Project Helix — chemical element intelligence & ML predictions</title>
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="portfolio-theme.css" />
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="grain" aria-hidden="true"></div>
 
-  <!-- ── Animated Background Canvas ── -->
+  <!-- ── Interactive Particle Background Canvas ── -->
   <canvas id="bg-canvas"></canvas>
 
   <!-- ── Top Navigation Bar ── -->
-  <nav class="navbar" id="navbar">
-    <div class="nav-inner">
-      <a class="nav-brand" href="#" aria-label="Project Helix Home">
-        <svg class="nav-logo" viewBox="0 0 800 600" aria-hidden="true">
-          <g stroke="#00e5c8" stroke-width="8" stroke-linecap="round" fill="none">
-            <line x1="280" y1="120" x2="330" y2="180"/><line x1="280" y1="120" x2="280" y2="240"/>
-            <line x1="330" y1="180" x2="280" y2="240"/><line x1="280" y1="240" x2="350" y2="200"/>
-            <line x1="330" y1="180" x2="350" y2="200"/><line x1="280" y1="240" x2="330" y2="300"/>
-            <line x1="330" y1="300" x2="280" y2="360"/><line x1="280" y1="360" x2="350" y2="420"/>
-            <line x1="280" y1="360" x2="280" y2="480"/><line x1="350" y1="420" x2="280" y2="480"/>
-            <line x1="330" y1="300" x2="350" y2="420"/>
-            <line x1="520" y1="120" x2="470" y2="180"/><line x1="520" y1="120" x2="520" y2="240"/>
-            <line x1="470" y1="180" x2="520" y2="240"/><line x1="520" y1="240" x2="450" y2="200"/>
-            <line x1="470" y1="180" x2="450" y2="200"/><line x1="520" y1="240" x2="470" y2="300"/>
-            <line x1="470" y1="300" x2="520" y2="360"/><line x1="520" y1="360" x2="450" y2="420"/>
-            <line x1="520" y1="360" x2="520" y2="480"/><line x1="450" y1="420" x2="520" y2="480"/>
-            <line x1="470" y1="300" x2="450" y2="420"/>
-            <line x1="330" y1="300" x2="470" y2="300"/>
-          </g>
-          <g fill="#00e5c8">
-            <circle cx="280" cy="120" r="14"/><circle cx="330" cy="180" r="14"/>
-            <circle cx="280" cy="240" r="14"/><circle cx="350" cy="200" r="14"/>
-            <circle cx="330" cy="300" r="14"/><circle cx="280" cy="360" r="14"/>
-            <circle cx="350" cy="420" r="14"/><circle cx="280" cy="480" r="14"/>
-            <circle cx="520" cy="120" r="14"/><circle cx="470" cy="180" r="14"/>
-            <circle cx="520" cy="240" r="14"/><circle cx="450" cy="200" r="14"/>
-            <circle cx="470" cy="300" r="14"/><circle cx="520" cy="360" r="14"/>
-            <circle cx="450" cy="420" r="14"/><circle cx="520" cy="480" r="14"/>
-          </g>
-        </svg>
-        <span class="nav-title"><span class="nav-title-light">PROJECT</span> HELIX</span>
-      </a>
-      <div class="nav-links">
-        <a href="#predictor" class="nav-link">Predictor</a>
-        <a href="#periodic-map" class="nav-link">Periodic Map</a>
-        <a href="#trends" class="nav-link">Trends</a>
-        <a href="#data-quality" class="nav-link">Data Quality</a>
-        <span class="nav-badge">Dataset v1.2 + ML</span>
-      </div>
+  <header class="site-header" id="navbar">
+    <a class="brand" href="#hero" aria-label="Project Helix home">
+      <span class="brand-mark">PH</span>
+      <span>Project Helix</span>
+    </a>
+
+    <nav class="desktop-nav" aria-label="Primary navigation">
+      <a href="#predictor">Predictor</a>
+      <a href="#predictions-section">ML Models</a>
+      <a href="#periodic-map">Periodic Map</a>
+      <a href="#trends">Trends</a>
+      <a href="#data-quality">Data Quality</a>
+      <a href="https://thehsiddarth.com" target="_blank" rel="noreferrer">thehsiddarth.com ↗</a>
+    </nav>
+
+    <div class="header-actions">
+      <a class="terminal-link" href="https://thehsiddarth.com#terminal" target="_blank" rel="noreferrer"><span>⌘</span> terminal</a>
+      <button id="themeToggle" class="icon-button" type="button" aria-label="Toggle theme">◐</button>
+      <button id="menuToggle" class="icon-button menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
     </div>
-  </nav>
+  </header>
 
-  <!-- ── Hero Section ── -->
-  <header class="hero" id="hero">
-    <div class="hero-content">
-      <p class="hero-eyebrow">Project Helix · Element Intelligence + ML</p>
-      <h1 class="hero-title">Explore Every<br><span class="hero-gradient">Element</span></h1>
-      <p class="hero-subtitle">Enter any atomic number to reveal physical properties, electron configuration, and ML-powered predictions — including hypothetical elements beyond Z=118.</p>
+  <div id="mobileMenu" class="mobile-menu" hidden>
+    <a href="#predictor">Predictor</a>
+    <a href="#predictions-section">ML Models</a>
+    <a href="#periodic-map">Periodic Map</a>
+    <a href="#trends">Trends</a>
+    <a href="#data-quality">Data Quality</a>
+    <a href="https://thehsiddarth.com" target="_blank" rel="noreferrer">thehsiddarth.com ↗</a>
+  </div>
 
-      <div class="search-container" id="predictor">
+  <main id="main">
+    <!-- ── Hero Section ── -->
+    <section id="hero" class="hero section">
+      <div class="hero-copy">
+        <p class="kicker"><span class="status-dot"></span> 118 elements · 15 properties · ridge regression ML · dataset v1.2</p>
+        <h1>Chemical element<br><em>intelligence.</em></h1>
+        <p class="hero-intro">Project Helix is a structured chemical elements dataset and machine learning engine. Explore physical properties, electron configurations, and predictive models for hypothetical elements beyond Z=118.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#predictor">Explore elements <span>↓</span></a>
+          <a class="text-link" href="https://thehsiddarth.com" target="_blank" rel="noreferrer">by H. Siddarth <span>↗</span></a>
+        </div>
+      </div>
+
+      <aside class="hero-note">
+        <div class="note-top"><span>dataset-v1.2.txt</span><span>01</span></div>
+        <p>118 confirmed elements.</p>
+        <p>15 physical properties.</p>
+        <p>Ridge regression models.</p>
+        <p>Extended beyond Z=118.</p>
+        <div class="note-rule"></div>
+        <p class="muted">JSON → pandas → CSV pipeline.<br>Automated quality validation.</p>
+      </aside>
+
+      <div class="hero-grid" aria-hidden="true">
+        <span>01</span><span>02</span><span>03</span><span>04</span><span>05</span>
+      </div>
+    </section>
+
+    <!-- ── Philosophy / Feature Ticker ── -->
+    <section class="ticker" aria-label="Dataset philosophy">
+      <div>118 ELEMENTS</div><div>·</div>
+      <div>15 PHYSICAL PROPERTIES</div><div>·</div>
+      <div>RIDGE REGRESSION ML</div><div>·</div>
+      <div>HYPOTHETICAL ELEMENTS (Z > 118)</div><div>·</div>
+      <div>AUTOMATED VALIDATION</div><div>·</div>
+      <div>JSON TO PANDAS TO CSV</div>
+    </section>
+
+    <!-- ── Section 01: Element Predictor ── -->
+    <section id="predictor" class="section content-section">
+      <div class="section-heading">
+        <div><span class="index">01</span><span class="eyebrow">element lookup</span></div>
+        <h2>Predictor</h2>
+        <p>Enter any atomic number (1–172+) to inspect physical properties, electron configurations, and ML predictions.</p>
+      </div>
+
+      <div class="search-container">
         <div class="search-box" id="search-box">
           <div class="search-icon" aria-hidden="true">⚛</div>
           <input
@@ -81,9 +112,10 @@
           />
           <button class="search-btn" id="search-btn" aria-label="Search element">
             <span class="search-btn-text">Analyse</span>
-            <span class="search-btn-arrow">→</span>
+            <span>→</span>
           </button>
         </div>
+
         <div class="search-hints">
           <button class="hint-chip" data-z="1">H · 1</button>
           <button class="hint-chip" data-z="6">C · 6</button>
@@ -95,166 +127,183 @@
           <button class="hint-chip hint-chip-special" data-z="137">Uts · 137</button>
           <button class="hint-chip hint-chip-special" data-z="164">Uhq · 164</button>
         </div>
+
         <div class="search-error" id="search-error" role="alert" aria-live="polite"></div>
       </div>
+    </section>
+
+    <!-- ── Loading Overlay ── -->
+    <div class="loading-overlay" id="loading-overlay">
+      <div class="spinner"></div>
+      <p class="loading-text">Loading Helix Dataset…</p>
     </div>
-    <div class="hero-deco" aria-hidden="true">
-      <div class="deco-ring ring-1"></div>
-      <div class="deco-ring ring-2"></div>
-      <div class="deco-ring ring-3"></div>
-    </div>
-  </header>
 
-  <!-- ── Loading Overlay ── -->
-  <div class="loading-overlay" id="loading-overlay">
-    <div class="spinner"></div>
-    <p class="loading-text">Loading Helix Dataset…</p>
-  </div>
+    <!-- ── Results Section ── -->
+    <section class="results-section" id="results-section" hidden>
 
-  <!-- ── Main Results Section ── -->
-  <main class="results-section" id="results-section" hidden>
-
-    <!-- Hypothetical element banner (shown for Z > 118) -->
-    <div class="hypothetical-banner" id="hypothetical-banner" hidden>
-      <div class="hypo-icon">🔮</div>
-      <div class="hypo-text">
-        <strong>Hypothetical Element</strong>
-        <span id="hypo-detail">This element has not been synthesised. All properties shown are ML predictions based on periodic trends.</span>
+      <!-- Hypothetical element banner (shown for Z > 118) -->
+      <div class="hypothetical-banner" id="hypothetical-banner" hidden>
+        <div class="hypo-icon">🔮</div>
+        <div class="hypo-text">
+          <strong>Hypothetical Element</strong>
+          <span id="hypo-detail">This element has not been synthesised yet. All properties shown are machine-learning predictions derived from periodic table trends.</span>
+        </div>
+        <div class="hypo-confidence" id="hypo-confidence"></div>
       </div>
-      <div class="hypo-confidence" id="hypo-confidence"></div>
-    </div>
 
-    <section class="element-hero-card" id="element-hero-card">
-      <div class="element-hero-inner">
-        <div class="element-identity">
-          <div class="element-symbol-badge" id="el-symbol-badge">
-            <span class="el-number" id="el-number">—</span>
-            <span class="el-symbol" id="el-symbol">—</span>
-            <span class="el-mass" id="el-mass">—</span>
+      <!-- Element Identity Card -->
+      <div class="element-hero-card" id="element-hero-card">
+        <div class="element-hero-inner">
+          <div class="element-identity">
+            <div class="element-symbol-badge" id="el-symbol-badge">
+              <span class="el-number" id="el-number">—</span>
+              <span class="el-symbol" id="el-symbol">—</span>
+              <span class="el-mass" id="el-mass">—</span>
+            </div>
+            <div class="element-meta">
+              <h2 class="el-name" id="el-name">—</h2>
+              <div class="el-tags" id="el-tags"></div>
+              <p class="el-summary" id="el-summary">—</p>
+              <div class="el-discovery" id="el-discovery"></div>
+            </div>
           </div>
-          <div class="element-meta">
-            <h2 class="el-name" id="el-name">—</h2>
-            <div class="el-tags" id="el-tags"></div>
-            <p class="el-summary" id="el-summary">—</p>
-            <div class="el-discovery" id="el-discovery"></div>
+          <div class="element-image-panel" id="element-image-panel">
+            <img class="el-photo" id="el-photo" src="" alt="" loading="lazy" />
+            <p class="el-photo-caption" id="el-photo-caption"></p>
           </div>
         </div>
-        <div class="element-image-panel" id="element-image-panel">
-          <img class="el-photo" id="el-photo" src="" alt="" loading="lazy" />
-          <p class="el-photo-caption" id="el-photo-caption"></p>
+      </div>
+
+      <!-- Section 02: Physical Properties -->
+      <div class="section-block">
+        <div class="section-heading compact">
+          <div><span class="index">02</span><span class="eyebrow">physical constants</span></div>
+          <h2>Physical Properties</h2>
+        </div>
+        <div class="prop-grid" id="prop-grid"></div>
+      </div>
+
+      <!-- Section 03: Electron Configuration -->
+      <div class="section-block">
+        <div class="section-heading compact">
+          <div><span class="index">03</span><span class="eyebrow">quantum architecture</span></div>
+          <h2>Electron Configuration</h2>
+        </div>
+        <div class="electron-section" id="electron-section">
+          <div class="ec-text-panel">
+            <div class="ec-notation" id="ec-notation">—</div>
+            <div class="ec-shells-row" id="ec-shells-row"></div>
+          </div>
+          <div class="bohr-panel">
+            <canvas class="bohr-canvas" id="bohr-canvas" width="320" height="320" aria-label="Bohr model diagram"></canvas>
+          </div>
         </div>
       </div>
-    </section>
 
-    <section class="section-block">
-      <h3 class="section-heading">Physical Properties</h3>
-      <div class="prop-grid" id="prop-grid"></div>
-    </section>
-
-    <section class="section-block">
-      <h3 class="section-heading">Electron Configuration</h3>
-      <div class="electron-section" id="electron-section">
-        <div class="ec-text-panel">
-          <div class="ec-notation" id="ec-notation">—</div>
-          <div class="ec-shells-row" id="ec-shells-row"></div>
+      <!-- Section 04: ML Predictions -->
+      <div class="section-block" id="predictions-section">
+        <div class="section-heading">
+          <div><span class="index">04</span><span class="eyebrow">machine learning models</span></div>
+          <h2>ML Predictions</h2>
+          <p>Values predicted by Ridge regression models with polynomial features trained on periodic trends. Physical bounds enforced.</p>
         </div>
-        <div class="bohr-panel">
-          <canvas class="bohr-canvas" id="bohr-canvas" width="320" height="320" aria-label="Bohr model diagram"></canvas>
+        <div class="model-metrics-row" id="model-metrics-row"></div>
+        <div class="prediction-grid" id="prediction-grid"></div>
+      </div>
+
+      <!-- Section 05: Periodic Map -->
+      <div class="section-block" id="periodic-map">
+        <div class="section-heading compact">
+          <div><span class="index">05</span><span class="eyebrow">table placement</span></div>
+          <h2>Periodic Position</h2>
+        </div>
+        <div class="periodic-wrapper">
+          <div class="mini-table" id="mini-table"></div>
+          <div class="position-stats" id="position-stats"></div>
         </div>
       </div>
-    </section>
 
-    <section class="section-block" id="predictions-section">
-      <h3 class="section-heading">
-        ML Property Predictions
-        <span class="heading-badge">Ridge Regression · Polynomial Features</span>
-      </h3>
-      <p class="section-desc">Values predicted by a Ridge regression model trained on periodic table features. Physical bounds are enforced. Actual values shown for known elements.</p>
-      <div class="model-metrics-row" id="model-metrics-row"></div>
-      <div class="prediction-grid" id="prediction-grid"></div>
-    </section>
-
-    <section class="section-block" id="periodic-map">
-      <h3 class="section-heading">Periodic Position</h3>
-      <div class="periodic-wrapper">
-        <div class="mini-table" id="mini-table"></div>
-        <div class="position-stats" id="position-stats"></div>
+      <!-- Section 06: Property Trends -->
+      <div class="section-block" id="trends">
+        <div class="section-heading">
+          <div><span class="index">06</span><span class="eyebrow">comparative trends</span></div>
+          <h2>Property Trends</h2>
+          <p>How this element compares across the dataset across periods, groups, blocks, or the entire periodic table.</p>
+        </div>
+        <div class="trends-controls">
+          <label class="trends-label" for="trend-property">Property:</label>
+          <select class="trends-select" id="trend-property">
+            <option value="atomic_mass">Atomic Mass</option>
+            <option value="density">Density</option>
+            <option value="melt">Melting Point (K)</option>
+            <option value="boil">Boiling Point (K)</option>
+            <option value="electronegativity_pauling">Electronegativity (Pauling)</option>
+            <option value="electron_affinity">Electron Affinity</option>
+            <option value="molar_heat">Molar Heat</option>
+          </select>
+          <label class="trends-label" for="trend-scope">Scope:</label>
+          <select class="trends-select" id="trend-scope">
+            <option value="all">All Elements</option>
+            <option value="period">Same Period</option>
+            <option value="group">Same Group</option>
+            <option value="block">Same Block</option>
+          </select>
+        </div>
+        <div class="chart-container">
+          <canvas id="trends-chart" aria-label="Property trend chart"></canvas>
+        </div>
       </div>
-    </section>
 
-    <section class="section-block" id="trends">
-      <h3 class="section-heading">Property Trends</h3>
-      <p class="section-desc">How this element compares across the dataset.</p>
-      <div class="trends-controls">
-        <label class="trends-label" for="trend-property">Property:</label>
-        <select class="trends-select" id="trend-property">
-          <option value="atomic_mass">Atomic Mass</option>
-          <option value="density">Density</option>
-          <option value="melt">Melting Point (K)</option>
-          <option value="boil">Boiling Point (K)</option>
-          <option value="electronegativity_pauling">Electronegativity (Pauling)</option>
-          <option value="electron_affinity">Electron Affinity</option>
-          <option value="molar_heat">Molar Heat</option>
-        </select>
-        <label class="trends-label" for="trend-scope">Scope:</label>
-        <select class="trends-select" id="trend-scope">
-          <option value="all">All Elements</option>
-          <option value="period">Same Period</option>
-          <option value="group">Same Group</option>
-          <option value="block">Same Block</option>
-        </select>
+      <!-- Section 07: Data Quality -->
+      <div class="section-block" id="data-quality">
+        <div class="section-heading">
+          <div><span class="index">07</span><span class="eyebrow">dataset validation</span></div>
+          <h2>Data Quality Report</h2>
+          <p>Automated validation report verifying completeness, null distributions, and anomaly bounds across the Helix dataset.</p>
+        </div>
+        <div class="quality-dashboard" id="quality-dashboard"></div>
       </div>
-      <div class="chart-container">
-        <canvas id="trends-chart" aria-label="Property trend chart"></canvas>
+
+      <!-- Element Navigation Arrows -->
+      <div class="nav-arrows">
+        <button class="arrow-btn" id="prev-btn" aria-label="Previous element">← Prev</button>
+        <span class="nav-arrow-label" id="nav-arrow-label"></span>
+        <button class="arrow-btn" id="next-btn" aria-label="Next element">Next →</button>
       </div>
+
     </section>
-
-    <!-- Data Quality Dashboard -->
-    <section class="section-block" id="data-quality">
-      <h3 class="section-heading">
-        Dataset Quality Report
-        <span class="heading-badge">v1.1 · Automated Analysis</span>
-      </h3>
-      <div class="quality-dashboard" id="quality-dashboard"></div>
-    </section>
-
-    <div class="nav-arrows">
-      <button class="arrow-btn" id="prev-btn" aria-label="Previous element">← Prev</button>
-      <span class="nav-arrow-label" id="nav-arrow-label"></span>
-      <button class="arrow-btn" id="next-btn" aria-label="Next element">Next →</button>
-    </div>
-
   </main>
 
-  <footer class="footer">
-    <div class="footer-inner">
-      <p class="footer-text"><strong>Project Helix</strong> · Dataset v1.2 + ML · 118+ Elements · 15 Features</p>
-      <p class="footer-sub">Data from <a class="footer-link" href="https://github.com/Bowserinator/Periodic-Table-JSON" target="_blank" rel="noopener">Periodic Table JSON</a> · ML models trained with scikit-learn · Built to understand before modelling.</p>
+  <!-- ── Site Footer (matching thehsiddarth.com including devotional) ── -->
+  <footer class="site-footer">
+    <div class="footer-meta">
+      <div class="footer-brand">
+        <span class="brand-mark">PH</span>
+        <span>Project Helix</span>
+        <span class="footer-badge">Dataset v1.2 + ML</span>
+      </div>
+      <p class="footer-desc">
+        A structured chemical elements dataset and ML predictor by <a href="https://thehsiddarth.com" target="_blank" rel="noreferrer">H. Siddarth</a>. Source data from <a href="https://github.com/Bowserinator/Periodic-Table-JSON" target="_blank" rel="noopener">Periodic Table JSON</a>. ML models trained with scikit-learn.
+      </p>
     </div>
-    
-<div class="footer-gratitude">
 
-  <span class="gratitude-label">
-    A MOMENT OF GRATITUDE
-  </span>
+    <!-- Devotional Section (identically formatted as on thehsiddarth.com) -->
+    <section class="devotional">
+      
 
-  <h2 class="gratitude-title">
-    ॥ ॐ नमः शिवाय ॥
-  </h2>
-
-  <div class="gratitude-mantra">
-    <p>ॐ नमो हिरण्यबाहवे हिरण्यवर्णाय</p>
-    <p>हिरण्यरूपाय हिरण्यपतये ।</p>
-    <p>अम्बिकापतये उमापतये पशुपतये</p>
-    <p>नमो नमः ॥</p>
-  </div>
-
-  <span class="gratitude-closing">
-    सर्वं शिवमयम्
-  </span>
-
-</div>
-
+    <div class="footer-bottom-row">
+      <span>© <span id="year"></span> H. Siddarth · Project Helix</span>
+      <a href="#hero">back to top ↑</a>
+    </div>
+    <span class="devotional-label">A MOMENT OF GRATITUDE</span>
+      <h2>॥ ॐ नमः शिवाय ॥</h2>
+      <p>
+        ॐ नमो हिरण्यबाहवे हिरण्यवर्णाय
+        हिरण्यरूपाय हिरण्यपतये ।
+        अम्बिकापतये उमापतये पशुपतये
+        नमो नमः ॥
+      </p>
+    </section>
   </footer>
 
   <script src="data.js"></script>

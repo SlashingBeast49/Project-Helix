@@ -272,3 +272,7 @@ const HelixML = (() => {
   };
 
 })();
+
+if (typeof window !== 'undefined') window.HelixML = HelixML;
+if (typeof globalThis !== 'undefined') globalThis.HelixML = HelixML;
+

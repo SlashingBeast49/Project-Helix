@@ -39,14 +39,131 @@ let bgAnimId = null;
 // ── Helper ─────────────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
 
-// ── Startup ────────────────────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', async () => {
-  initBackground();
-  initNavScroll();
-  await loadData();
-  initUI();
-  renderDataQuality();
-});
+function isLightTheme() {
+  return document.documentElement.dataset.theme === 'light';
+}
+
+function getThemeAccentRGB() {
+  return isLightTheme() ? '56, 107, 19' : '184, 243, 106';
+}
+
+function getThemeAccentHex() {
+  return isLightTheme() ? '#386b13' : '#b8f36a';
+}
+
+function hideLoadingOverlay() {
+  const overlay = $('loading-overlay');
+  if (overlay) {
+    overlay.classList.add('hidden');
+    overlay.style.opacity = '0';
+    overlay.style.pointerEvents = 'none';
+    setTimeout(() => {
+      overlay.style.display = 'none';
+      overlay.setAttribute('hidden', '');
+    }, 300);
+  }
+}
+
+function initThemeAndControls() {
+  try {
+    const root = document.documentElement;
+    const themeToggle = $('themeToggle');
+    const menuToggle = $('menuToggle');
+    const mobileMenu = $('mobileMenu');
+    const yr = $('year');
+
+    if (yr) yr.textContent = new Date().getFullYear();
+
+    let savedTheme = null;
+    try {
+      savedTheme = localStorage.getItem('hs-theme') || localStorage.getItem('helix-theme');
+    } catch (_) {}
+
+    if (savedTheme === 'light' || savedTheme === 'dark') {
+      root.dataset.theme = savedTheme;
+    }
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+        root.dataset.theme = next;
+        try {
+          localStorage.setItem('hs-theme', next);
+          localStorage.setItem('helix-theme', next);
+        } catch (_) {}
+        if (typeof currentZ !== 'undefined' && currentZ) {
+          renderTrendChart(currentZ);
+        }
+      });
+    }
+
+    if (menuToggle && mobileMenu) {
+      menuToggle.addEventListener('click', () => {
+        const isOpen = !mobileMenu.hidden;
+        mobileMenu.hidden = isOpen;
+        menuToggle.setAttribute('aria-expanded', String(!isOpen));
+        menuToggle.setAttribute('aria-label', isOpen ? 'Open navigation' : 'Close navigation');
+      });
+
+      mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu.hidden = true;
+          menuToggle.setAttribute('aria-expanded', 'false');
+          menuToggle.setAttribute('aria-label', 'Open navigation');
+        });
+      });
+    }
+  } catch (err) {
+    console.warn('initThemeAndControls warning:', err);
+  }
+}
+
+// ── Robust Startup Sequence ────────────────────────────────────────────────────
+async function startApp() {
+  try {
+    initThemeAndControls();
+  } catch (e) {
+    console.warn('initThemeAndControls error:', e);
+  }
+
+  try {
+    initBackground();
+  } catch (e) {
+    console.warn('initBackground error:', e);
+  }
+
+  try {
+    initNavScroll();
+  } catch (e) {
+    console.warn('initNavScroll error:', e);
+  }
+
+  try {
+    await loadData();
+  } catch (e) {
+    console.warn('loadData error:', e);
+  }
+
+  try {
+    initUI();
+  } catch (e) {
+    console.warn('initUI error:', e);
+  }
+
+  try {
+    renderDataQuality();
+  } catch (e) {
+    console.warn('renderDataQuality error:', e);
+  }
+
+  hideLoadingOverlay();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startApp);
+} else {
+  startApp();
+}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // BACKGROUND ANIMATION
@@ -92,7 +209,7 @@ function initBackground() {
         const dy = particles[i].y - particles[j].y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < 150) {
-          ctx.strokeStyle = `rgba(0,229,200,${0.07 * (1 - dist / 150)})`;
+          ctx.strokeStyle = `rgba(${getThemeAccentRGB()},${0.08 * (1 - dist / 150)})`;
           ctx.lineWidth = 1;
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
@@ -105,7 +222,7 @@ function initBackground() {
     for (const p of particles) {
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(0,229,200,${p.alpha})`;
+      ctx.fillStyle = `rgba(${getThemeAccentRGB()},${p.alpha * 0.7})`;
       ctx.fill();
     }
 
@@ -127,8 +244,12 @@ function initNavScroll() {
 // ═══════════════════════════════════════════════════════════════════════════════
 async function loadData() {
   try {
-    if (typeof HELIX_DATA !== 'undefined' && HELIX_DATA.elements) {
+    if (typeof HELIX_DATA !== 'undefined' && HELIX_DATA && HELIX_DATA.elements) {
       ALL_ELEMENTS = HELIX_DATA.elements
+        .filter(e => typeof e.number === 'number' && e.number >= 1 && e.number <= 118)
+        .sort((a, b) => a.number - b.number);
+    } else if (typeof window !== 'undefined' && window.HELIX_DATA && window.HELIX_DATA.elements) {
+      ALL_ELEMENTS = window.HELIX_DATA.elements
         .filter(e => typeof e.number === 'number' && e.number >= 1 && e.number <= 118)
         .sort((a, b) => a.number - b.number);
     } else {
@@ -139,9 +260,8 @@ async function loadData() {
         .filter(e => typeof e.number === 'number' && e.number >= 1 && e.number <= 118)
         .sort((a, b) => a.number - b.number);
     }
-    const overlay = $('loading-overlay');
-    if (overlay) overlay.classList.add('hidden');
   } catch (err) {
+    console.error('Failed to load dataset:', err);
     const overlay = $('loading-overlay');
     if (overlay) {
       const txt = overlay.querySelector('.loading-text');
@@ -149,6 +269,8 @@ async function loadData() {
       const sp = overlay.querySelector('.spinner');
       if (sp) sp.style.display = 'none';
     }
+  } finally {
+    hideLoadingOverlay();
   }
 }
 
@@ -214,7 +336,7 @@ function initUI() {
       errBox.textContent = 'Atomic number must be a positive integer (≥ 1).';
       return;
     }
-    displayElement(z);
+    displayElement(z, true);
   }
 
   btn.addEventListener('click', doSearch);
@@ -232,28 +354,28 @@ function initUI() {
   $('prev-btn').addEventListener('click', () => {
     if (currentZ > 1) {
       input.value = currentZ - 1;
-      displayElement(currentZ - 1);
+      displayElement(currentZ - 1, true);
     }
   });
 
   $('next-btn').addEventListener('click', () => {
     input.value = (currentZ || 1) + 1;
-    displayElement((currentZ || 1) + 1);
+    displayElement((currentZ || 1) + 1, true);
   });
 
   // Trend controls
   $('trend-property').addEventListener('change', () => currentZ && renderTrendChart(currentZ));
   $('trend-scope').addEventListener('change',    () => currentZ && renderTrendChart(currentZ));
 
-  // Show Hydrogen by default
+  // Render default element without jumping past the hero on page load
   input.value = 1;
-  displayElement(1);
+  displayElement(1, false);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // MAIN DISPLAY FUNCTION
 // ═══════════════════════════════════════════════════════════════════════════════
-function displayElement(z) {
+function displayElement(z, shouldScroll = true) {
   let el;
   if (z <= 118) {
     el = ALL_ELEMENTS.find(e => e.number === z);
@@ -267,8 +389,12 @@ function displayElement(z) {
   currentElement = el;
 
   const section = $('results-section');
-  section.removeAttribute('hidden');
-  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (section) {
+    section.removeAttribute('hidden');
+    if (shouldScroll) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
 
   // Handle Hypothetical Banner
   const banner = $('hypothetical-banner');
@@ -486,10 +612,13 @@ function renderBohrModel(el) {
 
     const now = Date.now();
 
+    const accent = getThemeAccentHex();
+    const accentRGB = getThemeAccentRGB();
+
     // Nucleus Glow
     const grd = ctx.createRadialGradient(CX, CY, 0, CX, CY, 18);
-    grd.addColorStop(0, '#00e5c8');
-    grd.addColorStop(0.5, 'rgba(0,229,200,0.5)');
+    grd.addColorStop(0, accent);
+    grd.addColorStop(0.5, `rgba(${accentRGB},0.5)`);
     grd.addColorStop(1, 'transparent');
     ctx.fillStyle = grd;
     ctx.beginPath();
@@ -497,8 +626,8 @@ function renderBohrModel(el) {
     ctx.fill();
 
     // Symbol in center
-    ctx.fillStyle = '#040d1a';
-    ctx.font = 'bold 9px Inter, sans-serif';
+    ctx.fillStyle = isLightTheme() ? '#ffffff' : '#111311';
+    ctx.font = 'bold 9px DM Mono, monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(el.symbol || '', CX, CY);
@@ -508,7 +637,7 @@ function renderBohrModel(el) {
       const r = shellStep * (i + 1);
 
       // Orbital track
-      ctx.strokeStyle = `rgba(0,229,200,${Math.max(0.06, 0.24 - i * 0.02)})`;
+      ctx.strokeStyle = `rgba(${accentRGB},${Math.max(0.06, 0.22 - i * 0.02)})`;
       ctx.lineWidth = 1;
       ctx.setLineDash([3, 5]);
       ctx.beginPath();
@@ -527,14 +656,14 @@ function renderBohrModel(el) {
 
         // Glow
         const eg = ctx.createRadialGradient(ex, ey, 0, ex, ey, 5);
-        eg.addColorStop(0, 'rgba(124,92,252,0.9)');
-        eg.addColorStop(1, 'rgba(124,92,252,0)');
+        eg.addColorStop(0, `rgba(${accentRGB},0.85)`);
+        eg.addColorStop(1, `rgba(${accentRGB},0)`);
         ctx.fillStyle = eg;
         ctx.beginPath();
         ctx.arc(ex, ey, 5, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = '#c084fc';
+        ctx.fillStyle = accent;
         ctx.beginPath();
         ctx.arc(ex, ey, 2.5, 0, Math.PI * 2);
         ctx.fill();
@@ -542,8 +671,8 @@ function renderBohrModel(el) {
 
       // Shell letter
       const letter = SHELL_LABELS[i] || `${i + 1}`;
-      ctx.fillStyle = 'rgba(232,240,254,0.35)';
-      ctx.font = '9px Inter, sans-serif';
+      ctx.fillStyle = isLightTheme() ? 'rgba(21,23,19,0.45)' : 'rgba(242,241,235,0.45)';
+      ctx.font = '9px DM Mono, monospace';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
       ctx.fillText(letter, CX + r + 4, CY);
@@ -800,8 +929,12 @@ function renderTrendChart(z) {
   const toX = valZ => PAD.left + (valZ - zMin) / (zMax - zMin || 1) * plotW;
   const toY = valV => PAD.top + plotH - (valV - vMin) / vRange * plotH;
 
+  const accent = getThemeAccentHex();
+  const accentRGB = getThemeAccentRGB();
+  const isLight = isLightTheme();
+
   // Grid lines
-  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.strokeStyle = isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)';
   ctx.lineWidth   = 1;
   for (let i = 0; i <= 4; i++) {
     const y = PAD.top + (plotH / 4) * i;
@@ -811,23 +944,23 @@ function renderTrendChart(z) {
     ctx.stroke();
 
     const val = vMax - (vRange / 4) * i;
-    ctx.fillStyle = 'rgba(232,240,254,0.3)';
-    ctx.font = '10px JetBrains Mono, monospace';
+    ctx.fillStyle = isLight ? 'rgba(21,23,19,0.5)' : 'rgba(242,241,235,0.5)';
+    ctx.font = '10px DM Mono, monospace';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
     ctx.fillText(formatNum(val, 2), PAD.left - 6, y);
   }
 
   // Axes label
-  ctx.fillStyle = 'rgba(232,240,254,0.5)';
-  ctx.font = '11px Inter, sans-serif';
+  ctx.fillStyle = isLight ? 'rgba(21,23,19,0.65)' : 'rgba(242,241,235,0.65)';
+  ctx.font = '11px DM Mono, monospace';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
   ctx.fillText('Atomic Number (Z)', PAD.left + plotW / 2, H - 14);
 
   // Line path
   ctx.beginPath();
-  ctx.strokeStyle = 'rgba(0,229,200,0.6)';
+  ctx.strokeStyle = `rgba(${accentRGB},0.85)`;
   ctx.lineWidth = 2;
   dataPoints.forEach((d, i) => {
     const x = toX(d.z), y = toY(d.v);
@@ -846,8 +979,8 @@ function renderTrendChart(z) {
   ctx.lineTo(toX(dataPoints[0].z), PAD.top + plotH);
   ctx.closePath();
   const grad = ctx.createLinearGradient(0, PAD.top, 0, PAD.top + plotH);
-  grad.addColorStop(0, 'rgba(0,229,200,0.18)');
-  grad.addColorStop(1, 'rgba(0,229,200,0)');
+  grad.addColorStop(0, `rgba(${accentRGB},0.22)`);
+  grad.addColorStop(1, `rgba(${accentRGB},0)`);
   ctx.fillStyle = grad;
   ctx.fill();
 
@@ -857,31 +990,31 @@ function renderTrendChart(z) {
     if (d.isCurrent) {
       ctx.beginPath();
       ctx.arc(x, y, 9, 0, Math.PI * 2);
-      ctx.fillStyle = d.isExtrapolated ? 'rgba(124,92,252,0.3)' : 'rgba(0,229,200,0.25)';
+      ctx.fillStyle = d.isExtrapolated ? 'rgba(192,132,252,0.35)' : `rgba(${accentRGB},0.3)`;
       ctx.fill();
 
       ctx.beginPath();
       ctx.arc(x, y, 5, 0, Math.PI * 2);
-      ctx.fillStyle = d.isExtrapolated ? '#c084fc' : '#00e5c8';
+      ctx.fillStyle = d.isExtrapolated ? '#c084fc' : accent;
       ctx.fill();
 
-      ctx.fillStyle = d.isExtrapolated ? '#c084fc' : '#00e5c8';
-      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.fillStyle = d.isExtrapolated ? '#c084fc' : accent;
+      ctx.font = 'bold 11px DM Sans, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'bottom';
       ctx.fillText(`${d.symbol} (${d.z})`, x, y - 8);
     } else {
       ctx.beginPath();
       ctx.arc(x, y, 3, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0,229,200,0.45)';
+      ctx.fillStyle = `rgba(${accentRGB},0.55)`;
       ctx.fill();
     }
   }
 
   // X ticks
   const tickStep = Math.max(1, Math.ceil((zMax - zMin + 1) / 8));
-  ctx.fillStyle = 'rgba(232,240,254,0.4)';
-  ctx.font = '9px JetBrains Mono, monospace';
+  ctx.fillStyle = isLight ? 'rgba(21,23,19,0.5)' : 'rgba(242,241,235,0.45)';
+  ctx.font = '9px DM Mono, monospace';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
   for (let t = zMin; t <= zMax; t += tickStep) {

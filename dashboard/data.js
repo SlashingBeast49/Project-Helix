@@ -1,4 +1,4 @@
-﻿/* Project Helix — Embedded Dataset */
+/* Project Helix — Embedded Dataset */
 const HELIX_DATA = {
     "elements": [
         {
@@ -6219,4 +6219,7 @@ const HELIX_DATA = {
         }
     ]
 };
+
+if (typeof window !== 'undefined') window.HELIX_DATA = HELIX_DATA;
+if (typeof globalThis !== 'undefined') globalThis.HELIX_DATA = HELIX_DATA;
 
